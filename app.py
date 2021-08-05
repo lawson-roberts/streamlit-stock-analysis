@@ -7,7 +7,7 @@ Created on Sun Mar 21 10:10:39 2021
 import pandas as pd
 import numpy as np
 from pandas import json_normalize
-from selenium.webdriver.support.expected_conditions import element_selection_state_to_be
+#from selenium.webdriver.support.expected_conditions import element_selection_state_to_be
 #import matplotlib.pyplot as plt
 #import seaborn as sns
 import streamlit as st
