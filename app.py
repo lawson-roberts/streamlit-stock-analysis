@@ -16,7 +16,7 @@ import plotly.express as px
 from PIL import Image
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import io
 from math import floor
 
