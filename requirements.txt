@@ -7,3 +7,5 @@ plotly-express==0.4.1
 requests==2.25.1
 streamlit==0.84.0
 yfinance==0.1.63
+regex==2021.7.6
+nltk==3.6.2
