@@ -16,4 +16,6 @@ def app():
     st.write("""    a.) Technical Indictor Analysis including Candles, MACD (Moving Average Convergence Divergence) Indicators, and RSI (Relative Strength Indicators)""")
     st.write("""    b.) Analyst Recommendation Data""")
     st.write("""    c.) Sentiment Analysis from Stock specific news articles""")
-    st.write("""### 2.) Industry Trends Analysis Page: Coming Soon!""")
+    st.write("""### 2.) Crypto Page: Here you can search for crypto you are interested in and see key details that are helpful for understanding the performance of a crypto currency.""")
+    st.write("""    a.) Technical Indictor Analysis including Candles, MACD (Moving Average Convergence Divergence) Indicators, and RSI (Relative Strength Indicators)""")
+    st.write("""### 3.) Industry Trends Analysis Page: Coming Soon!""")

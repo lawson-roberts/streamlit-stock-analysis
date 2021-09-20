@@ -37,11 +37,13 @@ import csv
 import home
 import stock_trends
 import stock_analysis
+import crypto
 
 PAGES = {
     "Home": home,
     "Stock Analysis": stock_analysis,
-    "Stock Trends": stock_trends
+    "Stock Trends": stock_trends,
+    "Crypto": crypto
 }
 
 ##Setting Streamlit Settings

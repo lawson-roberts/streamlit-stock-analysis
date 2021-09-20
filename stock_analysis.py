@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 21 10:10:39 2021
-
 @author: ROBERTLJ
 """
 import pandas as pd
@@ -356,6 +355,7 @@ def app():
         news_sentiment_desc = pd.DataFrame(news_df_short['compound'].describe())
         news_sentiment_desc = news_sentiment_desc.rename(columns = {'compound': 'Stock Sentiment Score'})
         
+        ## creating dataframes for news visuals
         source_sent_agg = news_df.groupby(['source', 'article_sentiment_bucket']).agg({'compound': 'mean', 'headline': 'count'}).reset_index()
         source_sent_agg = source_sent_agg.dropna()
 
@@ -368,6 +368,24 @@ def app():
         date_sent_agg = news_df.groupby('date').agg({'compound': 'mean'}).reset_index()
         date_sent_agg = date_sent_agg.dropna()
 
+        ## creating dataframes for most positive/negative news
+        positive_news = news_df_short.sort_values(by=['compound'], ascending=False).head(10)
+        #pos_article_logo = positive_news.sort_values(by=['image'], ascending=False)
+        #pos_article_logo = pos_article_logo.head(1)
+        #pos_article_logo = pos_article_logo['image']
+        #pos_article_logo = pos_article_logo.values[0]
+        #pos_article_logo_response = requests.get(pos_article_logo)
+        #pos_article_image_bytes = io.BytesIO(pos_article_logo_response.content)
+        #pos_article_img = Image.open(pos_article_image_bytes)
+
+        negative_news = news_df_short.sort_values(by=['compound'], ascending=True).head(10)
+        #neg_article_logo = negative_news.sort_values(by=['image'], ascending=False)
+        #neg_article_logo = neg_article_logo.head(1)
+        #neg_article_logo = neg_article_logo['image']
+        #neg_article_logo = neg_article_logo.values[0]
+        #neg_article_logo_response = requests.get(neg_article_logo)
+        #neg_article_image_bytes = io.BytesIO(neg_article_logo_response.content)
+        #neg_article_img = Image.open(neg_article_image_bytes)
 
         st.write("## News about", pick_ticker)
         news_exapnder = st.beta_expander(" ", expanded=True)
@@ -394,14 +412,31 @@ def app():
                 #st.write("## News Sentiment by Source", pick_ticker)
                 # Create Source Sentiment Chart
                 st.plotly_chart(px.scatter(source_sent_agg, x="source", y="compound", size ="headline", color = 'article_sentiment_bucket', hover_data=['compound'], title="Sentiment by News Source"),use_container_width=True)
-                st.plotly_chart(px.box(news_df, y="compound", title=" Sentiment Percentiles"))
+                #st.plotly_chart(px.box(news_df, y="compound", title=" Sentiment Percentiles"))
 
+                st.write("## Top Most Positive News Atricles")
+                st.write(positive_news.astype('object'))
+
+                st.write("## Top Most Negative News Atricles")
+                st.write(negative_news.astype('object'))
 
             with col10:
-                st.write("## News Stats")
+                #st.write("## News Stats")
                 st.plotly_chart(px.bar(sent_agg, y="article_sentiment_bucket", x="compound", orientation='h', title="Average Sentiment Score by Bucket"), use_container_width=True)
                 st.plotly_chart(px.bar(sent_agg, y="article_sentiment_bucket", x="headline", orientation='h', title="Count of News Articles by Bucket"), use_container_width=True)
-                st.write(news_sentiment_desc.astype('object'))
+                #st.write(news_sentiment_desc.astype('object'))
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.image(pos_article_img)
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.write(" ")
+                #st.image(neg_article_img)
 
         st.write(news_df_short.astype('object'))
                 
