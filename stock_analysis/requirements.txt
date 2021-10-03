@@ -1,0 +1,116 @@
+altair==4.1.0
+argon2-cffi==20.1.0
+astor==0.8.1
+async-generator==1.10
+attrs==21.2.0
+backcall @ file:///home/ktietz/src/ci/backcall_1611930011877/work
+base58==2.1.0
+beautifulsoup4==4.10.0
+bleach==3.3.0
+blinker==1.4
+bs4==0.0.1
+cachetools==4.2.2
+certifi==2021.5.30
+cffi==1.14.5
+chardet==4.0.0
+click==7.1.2
+cloudpickle==1.6.0
+colorama @ file:///tmp/build/80754af9/colorama_1607707115595/work
+configparser==5.0.2
+crayons==0.4.0
+cycler==0.10.0
+debugpy==1.3.0
+decorator @ file:///tmp/build/80754af9/decorator_1621259047763/work
+defusedxml==0.7.1
+entrypoints==0.3
+finnhub-python==2.4.2
+gitdb==4.0.7
+GitPython==3.1.18
+idna==2.10
+ipykernel==6.0.1
+ipython==7.25.0
+ipython-genutils @ file:///tmp/build/80754af9/ipython_genutils_1606773439826/work
+ipywidgets==7.6.3
+jedi==0.18.0
+Jinja2==3.0.1
+joblib==1.0.1
+jsonschema==3.2.0
+jupyter-client @ file:///tmp/build/80754af9/jupyter_client_1616770841739/work
+jupyter-core @ file:///C:/ci/jupyter_core_1612213356021/work
+jupyterlab-pygments==0.1.2
+jupyterlab-widgets==1.0.0
+kiwisolver==1.3.1
+llvmlite==0.36.0
+lxml==4.6.3
+MarkupSafe==2.0.1
+matplotlib==3.4.2
+matplotlib-inline==0.1.2
+mistune==0.8.4
+multitasking==0.0.9
+nbclient==0.5.3
+nbconvert==6.1.0
+nbformat==5.1.3
+nest-asyncio==1.5.1
+nltk==3.6.2
+notebook==6.4.0
+numba==0.53.1
+numpy==1.21.0
+packaging==21.0
+pandas==1.3.0
+pandas-datareader==0.10.0
+pandocfilters==1.4.3
+parso @ file:///tmp/build/80754af9/parso_1617223946239/work
+patsy==0.5.1
+pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+Pillow==8.3.0
+plotly==5.1.0
+plotly-express==0.4.1
+prometheus-client==0.11.0
+prompt-toolkit==3.0.19
+protobuf==3.17.3
+pyarrow==4.0.1
+pycparser==2.20
+pydeck==0.6.2
+Pygments @ file:///tmp/build/80754af9/pygments_1621606182707/work
+pyparsing==2.4.7
+pyrsistent==0.18.0
+python-dateutil @ file:///home/ktietz/src/ci/python-dateutil_1611928101742/work
+pytz==2021.1
+pywin32==301
+pywinpty==1.1.3
+pyzmq==22.1.0
+regex==2021.7.6
+requests==2.25.1
+scikit-learn==0.24.2
+scipy==1.7.0
+selenium==3.141.0
+Send2Trash==1.7.1
+shap==0.39.0
+six @ file:///tmp/build/80754af9/six_1623709665295/work
+sklearn==0.0
+slicer==0.0.7
+smmap==4.0.0
+soupsieve==2.2.1
+statsmodels==0.12.2
+streamlit==0.84.0
+tenacity==7.0.0
+terminado==0.10.1
+testpath==0.5.0
+textblob==0.15.3
+threadpoolctl==2.1.0
+toml==0.10.2
+toolz==0.11.1
+tornado @ file:///C:/ci/tornado_1606942392901/work
+tqdm==4.61.1
+traitlets @ file:///home/ktietz/src/ci/traitlets_1611929699868/work
+tzlocal==2.1
+urllib3==1.26.6
+validators==0.18.2
+watchdog==2.1.3
+wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
+webdriver-manager==3.4.2
+webencodings==0.5.1
+widgetsnbextension==3.5.1
+wincertstore==0.2
+wordcloud==1.8.1
+yfinance==0.1.63
