@@ -215,7 +215,7 @@ def app():
                     candles.update_xaxes(title="Date")
                     candles.update_layout(title="Daily Stock Pricing")
                     st.plotly_chart(candles, use_container_width = True)
-                    st.markdown(get_table_download_link(candles), unsafe_allow_html=True)
+                    st.markdown(get_table_download_link(price_data), unsafe_allow_html=True)
 
                 elif chart_selection == "MACD (Moving Average Convergence Divergence)":
                     # Create MACD Chart
@@ -232,7 +232,7 @@ def app():
                     macd.update_layout(title="Stock MACD Graph")
                     st.plotly_chart(macd, title="Stock RSI Graph", use_container_width = True)
                     st.markdown('**Note: In general the guidance is when these two lines cross this should signal some action to be taken. When the MACD Signal > MACD Formula Line you should sell the stock based on this technical. And vice versa.**')
-                    st.markdown(get_table_download_link(macd), unsafe_allow_html=True)
+                    st.markdown(get_table_download_link(price_data), unsafe_allow_html=True)
             
                 elif chart_selection == "RSI (Relative Strength Indictor)":
                     # Create RSI Chart
@@ -248,7 +248,7 @@ def app():
                     rsi.update_xaxes(title="Date")
                     rsi.update_layout(title="Stock RSI Graph")
                     st.plotly_chart(rsi, title="Stock RSI Graph", use_container_width = True)
-                    st.markdown(get_table_download_link(rsi), unsafe_allow_html=True)
+                    st.markdown(get_table_download_link(price_data), unsafe_allow_html=True)
 
                 else:
                     # Create Candlestick Chart
