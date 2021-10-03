@@ -1,0 +1,11 @@
+finnhub-python==2.4.2
+lxml==4.6.3
+numpy==1.21.0
+pandas==1.3.0
+plotly==5.1.0
+plotly-express==0.4.1
+requests==2.25.1
+streamlit==0.84.0
+yfinance==0.1.63
+regex==2021.7.6
+nltk==3.6.2
