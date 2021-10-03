@@ -85,6 +85,74 @@ def get_macd(price, slow, fast, smooth):
     df = pd.concat(frames, join = 'inner', axis = 1)
     return df
 
+def get_option_chain(ticker_desc):
+    ## running stock option scraping
+    base1 = "https://api.nasdaq.com/api/quote/"
+    base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
+    url = base1 + str(ticker_desc) + base2
+
+    payload={}
+    headers = {
+    'User-Agent': 'PostmanRuntime/7.28.4',
+    'Accept': '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Length': '1970',
+    'Connection': 'keep-alive'
+    }
+
+    response = requests.get(url, headers=headers, data=payload) 
+
+    response_text = json.loads(response.text)
+        
+    price = json_normalize(response_text['data'])
+    price = pd.DataFrame(price['lastTrade'], columns=['lastTrade'])
+    price[['last', 'trade', 'price', 'as', 'of', 'sep', 'day', 'year']]= price["lastTrade"].str.split(" ", expand = True)
+    price_new = price['price'].str[1:][0]
+    price_new = float(price_new)
+
+    option_data = json_normalize(response_text['data']['table'], 'rows')
+    option_data = option_data.drop(columns = ['drillDownURL'])
+    option_data['expirygroup'] = option_data['expirygroup'].replace('', np.nan).ffill()
+    option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
+    option_data = option_data.dropna(subset = ['strike'])
+
+    calls = option_data[['expirygroup', 'expiryDate', 'c_Last', 'c_Change', 'c_Bid', 'c_Ask', 'c_Volume', 'c_Openinterest', 'c_colour', 'strike']].copy()
+    calls = calls.rename(columns = {'c_Last': 'Last', 'c_Change': 'Change', 'c_Bid': 'Bid', 'c_Ask': 'Ask', 'c_Volume': 'Volume', 'c_Openinterest': 'Openinterest', 'c_colour': 'colour'})
+    calls['type'] = "Call"
+    calls['strike'] = calls['strike'].astype(float)
+    calls['money_category'] = np.where(calls['strike'] <= price_new, "In the Money", "Out of the Money")
+
+    puts = option_data[['expirygroup', 'expiryDate', 'p_Last', 'p_Change', 'p_Bid', 'p_Ask', 'p_Volume', 'p_Openinterest', 'p_colour', 'strike']].copy()
+    puts = puts.rename(columns = {'p_Last': 'Last', 'p_Change': 'Change', 'p_Bid': 'Bid', 'p_Ask': 'Ask', 'p_Volume': 'Volume', 'p_Openinterest': 'Openinterest', 'p_colour': 'colour'})
+    puts['type'] = "Put"
+    puts['strike'] = puts['strike'].astype(float)
+    puts['money_category'] = np.where(puts['strike'] >= price_new, "In the Money", "Out of the Money")
+
+    option_data_new = calls.append(puts)
+    option_data_new = option_data_new.replace('--', 0)
+    option_data_new['Last'] = option_data_new['Last'].astype(float)
+    option_data_new['Change'] = option_data_new['Change'].astype(float)
+    option_data_new['Bid'] = option_data_new['Bid'].astype(float)
+    option_data_new['Ask'] = option_data_new['Ask'].astype(float)
+    option_data_new['Volume'] = option_data_new['Volume'].astype(float)
+    option_data_new['Openinterest'] = option_data_new['Openinterest'].astype(float)
+    option_data_new['strike'] = option_data_new['strike'].astype(float)
+    option_data_new['new_date']= option_data_new['expirygroup']
+    #option_data_new['expirygroup'] = option_data_new['expirygroup'].astype(str)
+
+    maxStrikeValue = option_data_new['strike'].max()
+    minStrikeValue = option_data_new['strike'].min()
+    twenty_fifth_per = np.percentile(option_data_new['strike'], 25)
+    seventy_fifth_per = np.percentile(option_data_new['strike'], 75)
+
+    first_date = option_data_new['expirygroup'].head(1)
+    last_date = option_data_new['expirygroup'].tail(1)
+
+    start_date = pd.to_datetime(first_date.unique()[0])
+    end_date = pd.to_datetime(last_date.unique()[0])
+
+    return option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date
+
 def app():
 
     ##Setting Streamlit Settings
@@ -311,70 +379,7 @@ def app():
             with col8:
                 st.dataframe(recommendations)
 
-        ## running stock option scraping
-        base1 = "https://api.nasdaq.com/api/quote/"
-        base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
-        url = base1 + str(ticker_desc) + base2
-
-        payload={}
-        headers = {
-        'User-Agent': 'PostmanRuntime/7.28.4',
-        'Accept': '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Content-Length': '1970',
-        'Connection': 'keep-alive'
-        }
-
-        response = requests.get(url, headers=headers, data=payload) 
-
-        response_text = json.loads(response.text)
-        
-        price = json_normalize(response_text['data'])
-        price = pd.DataFrame(price['lastTrade'], columns=['lastTrade'])
-        price[['last', 'trade', 'price', 'as', 'of', 'sep', 'day', 'year']]= price["lastTrade"].str.split(" ", expand = True)
-        price_new = price['price'].str[1:][0]
-        price_new = float(price_new)
-
-        option_data = json_normalize(response_text['data']['table'], 'rows')
-        option_data = option_data.drop(columns = ['drillDownURL'])
-        option_data['expirygroup'] = option_data['expirygroup'].replace('', np.nan).ffill()
-        option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
-        option_data = option_data.dropna(subset = ['strike'])
-
-        calls = option_data[['expirygroup', 'expiryDate', 'c_Last', 'c_Change', 'c_Bid', 'c_Ask', 'c_Volume', 'c_Openinterest', 'c_colour', 'strike']].copy()
-        calls = calls.rename(columns = {'c_Last': 'Last', 'c_Change': 'Change', 'c_Bid': 'Bid', 'c_Ask': 'Ask', 'c_Volume': 'Volume', 'c_Openinterest': 'Openinterest', 'c_colour': 'colour'})
-        calls['type'] = "Call"
-        calls['strike'] = calls['strike'].astype(float)
-        calls['money_category'] = np.where(calls['strike'] <= price_new, "In the Money", "Out of the Money")
-
-        puts = option_data[['expirygroup', 'expiryDate', 'p_Last', 'p_Change', 'p_Bid', 'p_Ask', 'p_Volume', 'p_Openinterest', 'p_colour', 'strike']].copy()
-        puts = puts.rename(columns = {'p_Last': 'Last', 'p_Change': 'Change', 'p_Bid': 'Bid', 'p_Ask': 'Ask', 'p_Volume': 'Volume', 'p_Openinterest': 'Openinterest', 'p_colour': 'colour'})
-        puts['type'] = "Put"
-        puts['strike'] = puts['strike'].astype(float)
-        puts['money_category'] = np.where(puts['strike'] >= price_new, "In the Money", "Out of the Money")
-
-        option_data_new = calls.append(puts)
-        option_data_new = option_data_new.replace('--', 0)
-        option_data_new['Last'] = option_data_new['Last'].astype(float)
-        option_data_new['Change'] = option_data_new['Change'].astype(float)
-        option_data_new['Bid'] = option_data_new['Bid'].astype(float)
-        option_data_new['Ask'] = option_data_new['Ask'].astype(float)
-        option_data_new['Volume'] = option_data_new['Volume'].astype(float)
-        option_data_new['Openinterest'] = option_data_new['Openinterest'].astype(float)
-        option_data_new['strike'] = option_data_new['strike'].astype(float)
-        option_data_new['new_date']= option_data_new['expirygroup']
-        #option_data_new['expirygroup'] = option_data_new['expirygroup'].astype(str)
-
-        maxStrikeValue = option_data_new['strike'].max()
-        minStrikeValue = option_data_new['strike'].min()
-        twenty_fifth_per = np.percentile(option_data_new['strike'], 25)
-        seventy_fifth_per = np.percentile(option_data_new['strike'], 75)
-
-        first_date = option_data_new['expirygroup'].head(1)
-        last_date = option_data_new['expirygroup'].tail(1)
-
-        start_date = pd.to_datetime(first_date.unique()[0])
-        end_date = pd.to_datetime(last_date.unique()[0])
+        option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
 
         st.write("## Option Chain Activity for", pick_ticker)
         options_expander = st.beta_expander(" ", expanded=True)
