@@ -38,12 +38,14 @@ import home
 import stock_trends
 import stock_analysis
 import crypto
+import option_chain_activity
 
 PAGES = {
     "Home": home,
     "Stock Analysis": stock_analysis,
     "Stock Trends": stock_trends,
-    "Crypto": crypto
+    "Crypto": crypto,
+    "Option Chain Analysis": option_chain_activity
 }
 
 ##Setting Streamlit Settings
