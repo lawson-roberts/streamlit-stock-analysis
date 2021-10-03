@@ -325,7 +325,7 @@ def app():
         'Connection': 'keep-alive'
         }
 
-        response = requests.request("GET", url, headers=headers, data=payload, verify=False)
+        response = requests.get(url, headers=headers, data=payload) 
 
         response_text = json.loads(response.text)
         
