@@ -62,13 +62,9 @@ def get_option_chain(ticker_desc):
     #'Connection': 'keep-alive'
     #}
 
-    headers = {
-    'User-Agent': 'PostmanRuntime/7.28.4',
-    'Accept': '*/*',
-    'Accept-Encoding': 'gzip, deflate, br'
-    }
+    headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': '*/*','Accept-Encoding': 'gzip, deflate, br'}
 
-    response = requests.get(url, headers=headers, data=payload) 
+    response = requests.get(url, headers=headers, data=payload)
 
     response_text = json.loads(response.text)
         
