@@ -54,12 +54,18 @@ def get_option_chain(ticker_desc):
     url = base1 + str(ticker_desc) + base2
 
     payload={}
+    #headers = {
+    #'User-Agent': 'PostmanRuntime/7.28.4',
+    #'Accept': '*/*',
+    #'Accept-Encoding': 'gzip, deflate, br',
+    #'Content-Length': '1970',
+    #'Connection': 'keep-alive'
+    #}
+
     headers = {
     'User-Agent': 'PostmanRuntime/7.28.4',
     'Accept': '*/*',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Content-Length': '1970',
-    'Connection': 'keep-alive'
+    'Accept-Encoding': 'gzip, deflate, br'
     }
 
     response = requests.get(url, headers=headers, data=payload) 
