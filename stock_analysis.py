@@ -91,17 +91,16 @@ def get_option_chain(ticker_desc):
     base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
     url = base1 + str(ticker_desc) + base2
 
-    #payload={}
-    #headers = {
-    #'User-Agent': 'PostmanRuntime/7.28.4',
-    #'Accept': '*/*',
-    #'Accept-Encoding': 'gzip, deflate, br',
-    #'Content-Length': '1970',
-    #'Connection': 'keep-alive'
-    #}
+    payload={}
+    headers = {
+    'User-Agent': 'PostmanRuntime/7.28.4',
+    'Accept': '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Length': '1970',
+    'Connection': 'keep-alive'
+    }
 
-    #response = requests.get(url, headers=headers, data=payload)
-    response = requests.get(url)
+    response = requests.request("GET", url, headers=headers, data=payload)
 
     response_text = json.loads(response.text)
         

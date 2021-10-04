@@ -201,7 +201,13 @@ def app():
             option_strike_price_slider = st.slider("What Strike Prices would you like included?", float(minStrikeValue), float(maxStrikeValue), (float(twenty_fifth_per), float(seventy_fifth_per)))
             low_strike = option_strike_price_slider[0]
             high_strike = option_strike_price_slider[1]
-            date_mask1 = (option_data_new['expirygroup'] >= start_date) & (option_data_new['expirygroup'] <= end_date)
+            lowDate = date_slider[0]
+            st.write(lowDate)
+            highDate = date_slider[1]
+            st.write(highDate)
+            option_data_new['expirygroup'] = pd.to_datetime(option_data_new['expirygroup']).dt.date
+
+            date_mask1 = (option_data_new['expirygroup'] >= lowDate) & (option_data_new['expirygroup'] <= highDate)
             option_data_new = option_data_new.loc[date_mask1]
 
             strike_mask1 = (option_data_new['strike'] >= low_strike) & (option_data_new['strike'] <= high_strike)
@@ -216,8 +222,8 @@ def app():
             option_data['c_Openinterest'] = option_data['c_Openinterest'].astype(float)
             option_data['p_Openinterest'] = option_data['p_Openinterest'].astype(float)
             option_data['strike'] = option_data['strike'].astype(float)
-            option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
-            date_mask2 = (option_data['expirygroup'] >= start_date) & (option_data['expirygroup'] <= end_date)
+            option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup']).dt.date
+            date_mask2 = (option_data['expirygroup'] >= lowDate) & (option_data['expirygroup'] <= highDate)
             option_data = option_data.loc[date_mask2]
 
             strike_mask2 = (option_data['strike'] >= low_strike) & (option_data['strike'] <= high_strike)
