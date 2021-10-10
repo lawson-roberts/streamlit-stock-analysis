@@ -1,75 +1,76 @@
-import requests
-import time
 import pandas as pd
 import numpy as np
+from pandas import json_normalize
+import json
+#from selenium.webdriver.support.expected_conditions import element_selection_state_to_be
+#import matplotlib.pyplot as plt
+#import seaborn as sns
+import streamlit as st
+import base64
+import plotly.express as px
+from PIL import Image
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+#import matplotlib.pyplot as plt
+import io
+from math import floor
+
+## sentiment analysis
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+##stock packages
+import yfinance as yfin
+import finnhub
+
+## web crawling packages
+import time
+from datetime import date
+from datetime import datetime
+import datetime
+import requests
 from lxml import html
 import csv
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.select import Select
 
-"""
-## This script is for scraping available stock tickers. Having a list available to choose from will increase user expereince by enabling easier searching of companies.
-"""
 
-def get_tickers():
+def gather_tickers():
+    ##importing files needed for web app
+    ticker_selection = pd.read_csv('data/tickers_only.csv')
+    tickers = ticker_selection['ticker']
+    
+    response_list = []
+    error_list = []
+    
+    for i in tickers:
+    
+        
+        try:
+            time.sleep(2)
+        
+            base1 = "https://api.nasdaq.com/api/quote/"
+            base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
+            url = base1 + str(i) + base2
 
-    """
-    ## This function is for scraping the available stock tickers from the website https://stockanalysis.com/stocks/.
-    ## We will be using a web scraping technique "xpath". This is essentially reading a websites html code and getting the elements you want.
-    """
+            payload={}
 
-    web = "https://stockanalysis.com/stocks/"
-    driver = webdriver.Chrome(r'C:\Users\rober\Anaconda3\bin\chromedriver')
-    driver.get(web)
-    sel = Select(driver.find_element_by_xpath('//select[@name="perpage"]'))
-    sel.select_by_visible_text("10000")
+            #headers = {'server':'Kestrel', 'Accept':'application/json, text/plain, */*','Accept-Encoding': 'gzip, deflate, br', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'}
+            headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': '*/*','Accept-Encoding': 'gzip, deflate, br'}
 
-    time.sleep(5)
+            response = requests.get(url, headers=headers, data=payload)
 
-    ticker_list = []
-    company_name_list = []
-    industry_list = []
+            response_text = json.loads(response.text)
+            response_list.append(response_text)
 
-    ## starting to find elements
-    ticker = driver.find_elements_by_xpath('//*[@id="main"]/div/div/div[2]/table/tbody/tr/td[1]/a')
-    for a in range(len(ticker)):
-        ticker_list.append(ticker[a].text)
+        except Exception as e:
+            error_list.append([i, e])
+            print("Error:", e)
 
-    company_name = driver.find_elements_by_xpath('//*[@id="main"]/div/div/div[2]/table/tbody/tr/td[2]')
-    for b in range(len(company_name)):
-        company_name_list.append(company_name[b].text)
+    option_chain_df = pd.DataFrame(response_list, columns = ['ticker', 'option_data'])
+    option_chain_df.to_csv('data/option_chain_data.csv')
+    error_df = pd.DataFrame(error_list, columns = ['ticker', 'error_desc'])
+    error_df.to_csv('data/option_chain_errors.csv')
+    return option_chain_df, error_df
 
-    industry = driver.find_elements_by_xpath('//*[@id="main"]/div/div/div[2]/table/tbody/tr/td[3]')
-    for c in range(len(industry)):
-        industry_list.append(industry[c].text)
-
-    ## Creating dataframes so I can join this all together
-    ticker_df = pd.DataFrame(ticker_list)
-    company_name_df = pd.DataFrame(company_name_list)
-    industry_df = pd.DataFrame(industry_list)
-    big_df = pd.concat([ticker_df, company_name_df, industry_df], axis=1)
-
-    return big_df
-
-def clean_tickers(big_df):
-
-    """
-    ## This function is for cleaning the original list of tickers. There are some items from the list that are either not legit tickers that we remove here.
-    ## The last part of this function is creating a dataframe that we then use to create some additional features to help with searching.
-    """
-
-    ## creating a couple new columns to create a link and full searchable stock name plus ticker to help with app search.
-    big_df.columns = ['ticker', 'company_name', 'industry']
-    big_df['full'] = big_df['ticker'] + " - " + big_df['company_name']
-    big_df['url'] = "https://stockanalysis.com/stocks/" + big_df['ticker'] + "/"
-    big_df['full'] = big_df['full'].astype('str')
-    big_df['ticker'] = big_df.ticker.str.strip()
-
-    ## create csv to use for streamlit app
-    big_df.to_csv('data/tickers_only.csv')
-
-    return big_df
-
-big_df = get_tickers()
-ticker_df = clean_tickers(big_df)
+option_chain_df, error_df = gather_tickers()

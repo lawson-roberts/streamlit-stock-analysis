@@ -1,9 +1,9 @@
-name: update_tickers
+name: update_option_data
 
 on:
   schedule:
-    ## runs every week on friday
-    - cron: '0 12 * * 5'
+    ## runs every week on sunday
+    - cron: '0 12 * * 0'
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
 
       - name: execute py script
         run: |
-          python get_stock_tickers.py
+          python get_option_chain_data.py
 
       - name: commmit files
         run: |
