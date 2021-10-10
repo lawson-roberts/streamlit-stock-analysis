@@ -3,7 +3,7 @@ name: update_tickers
 on:
   schedule:
     ## runs every week on friday
-    - cron: '* * * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   build:
