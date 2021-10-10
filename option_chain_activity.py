@@ -62,8 +62,8 @@ def get_option_chain(ticker_desc):
     #'Connection': 'keep-alive'
     #}
 
-    headers = {'Accept':'application/json, text/plain, */*','Accept-Encoding': 'gzip, deflate, br', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'}
-    #headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': 'application/json, text/plain, */*','Accept-Encoding': 'gzip, deflate, br'}
+    #headers = {'server':'Kestrel', 'Accept':'application/json, text/plain, */*','Accept-Encoding': 'gzip, deflate, br', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'}
+    headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': '*/*','Accept-Encoding': 'gzip, deflate, br'}
 
     response = requests.get(url, headers=headers, data=payload)
 
@@ -186,8 +186,6 @@ def app():
         pass
     else:
 
-        option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
-
         st.write("## Option Chain Activity for", pick_ticker)
         options_expander = st.beta_expander(" ", expanded=True)
 
@@ -197,6 +195,7 @@ def app():
             #st.write(option_data.astype('object'))
 
             st.write("### Options Filters:")
+            option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
             date_selection = pd.DataFrame(option_data_new['expirygroup'])
             dummy_date_selector = pd.DataFrame({'expirygroup': ['Please Select a Date']})
             date_selection_new = dummy_date_selector.append(date_selection)
