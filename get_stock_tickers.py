@@ -5,6 +5,7 @@ import numpy as np
 from lxml import html
 import csv
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
@@ -20,7 +21,8 @@ def get_tickers():
     """
 
     web = "https://stockanalysis.com/stocks/"
-    driver = webdriver.Chrome(r'C:\Users\rober\Anaconda3\bin\chromedriver')
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    #driver = webdriver.Chrome(r'C:\Users\rober\Anaconda3\bin\chromedriver')
     driver.get(web)
     sel = Select(driver.find_element_by_xpath('//select[@name="perpage"]'))
     sel.select_by_visible_text("10000")

@@ -1,0 +1,39 @@
+name: update_tickers
+
+on:
+  schedule:
+    -cron: '0 12 * * 5' ## runs every week on friday
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2
+      - name : setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.10' ## specific python version I am using
+
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: execute py script
+        run: |
+          python get_stock_tickers.py
+
+      - name: commmit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "update data" -a
+
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
