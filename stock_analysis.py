@@ -379,89 +379,89 @@ def app():
             with col8:
                 st.dataframe(recommendations)
 
-        option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
+        #option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
 
-        st.write("## Option Chain Activity for", pick_ticker)
-        options_expander = st.beta_expander(" ", expanded=True)
+        #st.write("## Option Chain Activity for", pick_ticker)
+        #options_expander = st.beta_expander(" ", expanded=True)
 
-        with options_expander:
-            st.write("""https://www.nerdwallet.com/article/investing/options-trading-definitions used for understanding option chain data terms.""")
+        #with options_expander:
+            #st.write("""https://www.nerdwallet.com/article/investing/options-trading-definitions used for understanding option chain data terms.""")
 
-            st.write(option_data.astype('object'))
+            #st.write(option_data.astype('object'))
 
-            st.write("### Options Filters:")
-            date_selection = pd.DataFrame(option_data_new['expirygroup'])
-            dummy_date_selector = pd.DataFrame({'expirygroup': ['Please Select a Date']})
-            date_selection_new = dummy_date_selector.append(date_selection)
-            date_slider = st.slider('Select date range', start_date.date(), end_date.date(), (start_date.date(), end_date.date()))
-            option_strike_price_slider = st.slider("What Strike Prices would you like included?", float(minStrikeValue), float(maxStrikeValue), (float(twenty_fifth_per), float(seventy_fifth_per)))
-            low_strike = option_strike_price_slider[0]
-            high_strike = option_strike_price_slider[1]
-            date_mask1 = (option_data_new['expirygroup'] >= start_date) & (option_data_new['expirygroup'] <= end_date)
-            option_data_new = option_data_new.loc[date_mask1]
+            #st.write("### Options Filters:")
+            #date_selection = pd.DataFrame(option_data_new['expirygroup'])
+            #dummy_date_selector = pd.DataFrame({'expirygroup': ['Please Select a Date']})
+            #date_selection_new = dummy_date_selector.append(date_selection)
+            #date_slider = st.slider('Select date range', start_date.date(), end_date.date(), (start_date.date(), end_date.date()))
+            #option_strike_price_slider = st.slider("What Strike Prices would you like included?", float(minStrikeValue), float(maxStrikeValue), (float(twenty_fifth_per), float(seventy_fifth_per)))
+            #low_strike = option_strike_price_slider[0]
+            #igh_strike = option_strike_price_slider[1]
+            #date_mask1 = (option_data_new['expirygroup'] >= start_date) & (option_data_new['expirygroup'] <= end_date)
+            #option_data_new = option_data_new.loc[date_mask1]
 
-            strike_mask1 = (option_data_new['strike'] >= low_strike) & (option_data_new['strike'] <= high_strike)
-            option_data_new = option_data_new.loc[strike_mask1]
+            #strike_mask1 = (option_data_new['strike'] >= low_strike) & (option_data_new['strike'] <= high_strike)
+            #option_data_new = option_data_new.loc[strike_mask1]
 
-            calls_clean = option_data_new[option_data_new['type'] == 'Call']
-            puts_clean = option_data_new[option_data_new['type'] == 'Put']
+            #calls_clean = option_data_new[option_data_new['type'] == 'Call']
+            #puts_clean = option_data_new[option_data_new['type'] == 'Put']
 
-            option_data = option_data.replace('--', 0)
-            option_data['c_Volume'] = option_data['c_Volume'].astype(float)
-            option_data['p_Volume'] = option_data['p_Volume'].astype(float)
-            option_data['c_Openinterest'] = option_data['c_Openinterest'].astype(float)
-            option_data['p_Openinterest'] = option_data['p_Openinterest'].astype(float)
-            option_data['strike'] = option_data['strike'].astype(float)
-            option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
-            date_mask2 = (option_data['expirygroup'] >= start_date) & (option_data['expirygroup'] <= end_date)
-            option_data = option_data.loc[date_mask2]
+            #option_data = option_data.replace('--', 0)
+            #option_data['c_Volume'] = option_data['c_Volume'].astype(float)
+            #option_data['p_Volume'] = option_data['p_Volume'].astype(float)
+            #option_data['c_Openinterest'] = option_data['c_Openinterest'].astype(float)
+            #option_data['p_Openinterest'] = option_data['p_Openinterest'].astype(float)
+            #option_data['strike'] = option_data['strike'].astype(float)
+            #option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
+            #date_mask2 = (option_data['expirygroup'] >= start_date) & (option_data['expirygroup'] <= end_date)
+            #option_data = option_data.loc[date_mask2]
 
-            strike_mask2 = (option_data['strike'] >= low_strike) & (option_data['strike'] <= high_strike)
-            option_data = option_data.loc[strike_mask2]
+            #strike_mask2 = (option_data['strike'] >= low_strike) & (option_data['strike'] <= high_strike)
+            #option_data = option_data.loc[strike_mask2]
 
-            option_data_executed_volume_graph = pd.DataFrame(option_data.groupby('strike').agg({'c_Volume': 'sum', 'p_Volume': 'sum'})).reset_index()
-            option_data_executed_volume_graph['call/put_ratio_Volume'] = option_data_executed_volume_graph['c_Volume'] / option_data_executed_volume_graph['p_Volume']
+            #option_data_executed_volume_graph = pd.DataFrame(option_data.groupby('strike').agg({'c_Volume': 'sum', 'p_Volume': 'sum'})).reset_index()
+            #option_data_executed_volume_graph['call/put_ratio_Volume'] = option_data_executed_volume_graph['c_Volume'] / option_data_executed_volume_graph['p_Volume']
 
-            option_data_open_interest_graph = pd.DataFrame(option_data.groupby('strike').agg({'c_Openinterest': 'sum', 'p_Openinterest': 'sum'})).reset_index()
-            option_data_open_interest_graph['call/put_ratio_Openinterest'] = option_data_open_interest_graph['c_Openinterest'] / option_data_open_interest_graph['p_Openinterest']
+            #option_data_open_interest_graph = pd.DataFrame(option_data.groupby('strike').agg({'c_Openinterest': 'sum', 'p_Openinterest': 'sum'})).reset_index()
+            #option_data_open_interest_graph['call/put_ratio_Openinterest'] = option_data_open_interest_graph['c_Openinterest'] / option_data_open_interest_graph['p_Openinterest']
 
             ## Create Volume / Openinterest Chart
-            option_ratios_graph = make_subplots(specs=[[{"secondary_y": True}]])
+            #option_ratios_graph = make_subplots(specs=[[{"secondary_y": True}]])
 
-            option_ratios_graph.add_trace(go.Scatter(x=option_data_executed_volume_graph['strike'], y=option_data_executed_volume_graph['call/put_ratio_Volume'], name='call/put_ratio_Volume'), secondary_y=False)
-            option_ratios_graph.add_trace(go.Scatter(x=option_data_open_interest_graph['strike'], y=option_data_open_interest_graph['call/put_ratio_Openinterest'], name='call/put_ratio_Openinterest'), secondary_y=True)
+            #option_ratios_graph.add_trace(go.Scatter(x=option_data_executed_volume_graph['strike'], y=option_data_executed_volume_graph['call/put_ratio_Volume'], name='call/put_ratio_Volume'), secondary_y=False)
+            #option_ratios_graph.add_trace(go.Scatter(x=option_data_open_interest_graph['strike'], y=option_data_open_interest_graph['call/put_ratio_Openinterest'], name='call/put_ratio_Openinterest'), secondary_y=True)
             ## Set y-axes titles
-            option_ratios_graph.update_yaxes(title_text="call/put_ratio_<b>Volume</b>", secondary_y=False)
-            option_ratios_graph.update_yaxes(title_text="call/put_ratio_<b>Openinterest</b>", secondary_y=True)
-            option_ratios_graph.update_xaxes(title="Strike Price")
-            option_ratios_graph.update_layout(title="Stock Option Chain Ratio's")
-            st.plotly_chart(option_ratios_graph, use_container_width=True)
-            st.write("1.) Ratio used for chart above is based off said metrics calls / the same metrics puts. Trying to identify if there are any trends of people being call vs put heavy.")
-            st.write("2.) Blue line is the indicator for Volume of options executed, Red line is the indicator for Openinterst in the market not yet executed.")
+            #option_ratios_graph.update_yaxes(title_text="call/put_ratio_<b>Volume</b>", secondary_y=False)
+            #option_ratios_graph.update_yaxes(title_text="call/put_ratio_<b>Openinterest</b>", secondary_y=True)
+            #option_ratios_graph.update_xaxes(title="Strike Price")
+            #option_ratios_graph.update_layout(title="Stock Option Chain Ratio's")
+            #st.plotly_chart(option_ratios_graph, use_container_width=True)
+            #st.write("1.) Ratio used for chart above is based off said metrics calls / the same metrics puts. Trying to identify if there are any trends of people being call vs put heavy.")
+            #st.write("2.) Blue line is the indicator for Volume of options executed, Red line is the indicator for Openinterst in the market not yet executed.")
             
-            col9, col10 = st.beta_columns(2)
-            with col9:
-                st.plotly_chart(px.bar(option_data_new, x="strike", y="Volume", color="type", hover_data=['Openinterest', 'expiryDate'], barmode = 'stack', title="Volume"))
+            #col9, col10 = st.beta_columns(2)
+            #with col9:
+                #st.plotly_chart(px.bar(option_data_new, x="strike", y="Volume", color="type", hover_data=['Openinterest', 'expiryDate'], barmode = 'stack', title="Volume"))
             
-            with col10:
-                st.plotly_chart(px.bar(option_data_new, x="strike", y="Openinterest", color="type", hover_data=['Volume', 'expiryDate'], barmode = 'stack', title="Openinterest"))
+            #with col10:
+                #st.plotly_chart(px.bar(option_data_new, x="strike", y="Openinterest", color="type", hover_data=['Volume', 'expiryDate'], barmode = 'stack', title="Openinterest"))
             
             
             
-            st.write('Open Interest by Strike Price, size by volume of options that have been exercised')
-            fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
-            fig = make_subplots(rows=1, cols=2, subplot_titles=("Calls", "Puts"))
-            scatter1 = px.scatter(calls_clean, x="strike", y="Openinterest", size ="Volume", title="Calls")
-            scatter2 = px.scatter(puts_clean, x="strike", y="Openinterest", size ="Volume", title="Puts")
+            #st.write('Open Interest by Strike Price, size by volume of options that have been exercised')
+            #fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
+            #fig = make_subplots(rows=1, cols=2, subplot_titles=("Calls", "Puts"))
+            #scatter1 = px.scatter(calls_clean, x="strike", y="Openinterest", size ="Volume", title="Calls")
+            #scatter2 = px.scatter(puts_clean, x="strike", y="Openinterest", size ="Volume", title="Puts")
 
-            trace3 = scatter1['data'][0]
-            trace4 = scatter2['data'][0]
-            fig.add_trace(trace3, row=1, col=1)
-            fig.add_trace(trace4, row=1, col=2)
-            fig.update_layout(title="Open Interest by Strike Price, size by volume of options that have been exercised")
-            st.plotly_chart(fig, use_container_width=True)
-            st.write(option_data_new.astype('object'))
-            st.markdown(get_table_download_link(option_data_new), unsafe_allow_html=True)
+            #trace3 = scatter1['data'][0]
+            #trace4 = scatter2['data'][0]
+            #fig.add_trace(trace3, row=1, col=1)
+            #fig.add_trace(trace4, row=1, col=2)
+            #fig.update_layout(title="Open Interest by Strike Price, size by volume of options that have been exercised")
+            #st.plotly_chart(fig, use_container_width=True)
+            #st.write(option_data_new.astype('object'))
+            #st.markdown(get_table_download_link(option_data_new), unsafe_allow_html=True)
         
         
         ## pulling stock news from finnhub
