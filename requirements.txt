@@ -10,3 +10,4 @@ yfinance==0.1.63
 regex==2021.7.6
 nltk==3.6.2
 selenium==3.141.0
+webdiver_manager==3.4.2
