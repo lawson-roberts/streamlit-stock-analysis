@@ -24,14 +24,14 @@ def gather_tickers():
     ticker_selection = pd.read_csv('data/tickers_only.csv')
     tickers = ticker_selection['ticker']
     
-    response_list = []
+    response_dict = {"ticker":[],"option_data":[]}
     error_list = []
     
-    for i in tickers:
+    for i in tickers[:5]:
+        
+        time.sleep(2)
         
         try:
-            time.sleep(2)
-        
             base1 = "https://api.nasdaq.com/api/quote/"
             base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
             url = base1 + str(i) + base2
@@ -44,17 +44,17 @@ def gather_tickers():
             response = requests.get(url, headers=headers, data=payload)
 
             response_text = json.loads(response.text)
-            response_list.append(response_text)
+            response_dict['ticker'].append(i)
+            response_dict['option_data'].append(response_text)
             print("Loaded Option Chain Data for:", i)
 
         except Exception as e:
             error_list.append([i, e])
             print("Error:", e)
 
-    option_chain_df = pd.DataFrame(response_list, columns = ['ticker', 'option_data'])
-    option_chain_df.to_csv('data/option_chain_data.csv')
-    error_df = pd.DataFrame(error_list, columns = ['ticker', 'error_desc'])
-    error_df.to_csv('data/option_chain_errors.csv')
-    return option_chain_df, error_df
+        big_df = pd.DataFrame(response_dict)
+        big_df.to_csv('data/option_chain_data.csv')
 
-option_chain_df, error_df = gather_tickers()
+    return big_df
+
+response_df = gather_tickers()
