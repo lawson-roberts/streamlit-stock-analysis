@@ -27,7 +27,7 @@ def gather_tickers():
     response_dict = {"ticker":[],"option_data":[]}
     error_list = []
     
-    for i in tickers[:5]:
+    for i in tickers:
         
         time.sleep(2)
         
