@@ -26,10 +26,12 @@ def gather_tickers():
     
     response_dict = {"ticker":[],"option_data":[]}
     error_list = []
+
+    start = time.time()
     
-    for i in tickers:
+    for i in tickers[:20]:
         
-        time.sleep(2)
+        time.sleep(1)
         
         try:
             base1 = "https://api.nasdaq.com/api/quote/"
@@ -54,6 +56,9 @@ def gather_tickers():
 
         big_df = pd.DataFrame(response_dict)
         big_df.to_csv('data/option_chain_data.csv')
+
+    end = time.time()
+    print("Gathering Stock Tickers Took...", round((end - start)/60, 2), "minutes")
 
     return big_df
 

@@ -4,10 +4,11 @@ import pandas as pd
 import numpy as np
 from lxml import html
 import csv
+import selenium
 from selenium import webdriver
-import chromedriver_autoinstaller
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+import chromedriver_autoinstaller
 
 """
 ## This script is for scraping available stock tickers. Having a list available to choose from will increase user expereince by enabling easier searching of companies.
@@ -22,10 +23,12 @@ def get_tickers():
 
     web = "https://stockanalysis.com/stocks/"
     #driver = webdriver.Chrome(r'C:\Users\rober\Anaconda3\bin\chromedriver')
+    chromedriver_autoinstaller.install()
     driver = webdriver.Chrome()
     driver.get(web)
     sel = Select(driver.find_element_by_xpath('//select[@name="perpage"]'))
     sel.select_by_visible_text("10000")
+    print("Selected All Tickers")
 
     time.sleep(5)
 
@@ -48,9 +51,13 @@ def get_tickers():
 
     ## Creating dataframes so I can join this all together
     ticker_df = pd.DataFrame(ticker_list)
+    print("Ticker DataFrame Created...")
     company_name_df = pd.DataFrame(company_name_list)
+    print("Company Name DataFrame Created...")
     industry_df = pd.DataFrame(industry_list)
+    print("Industry DataFrame Created...")
     big_df = pd.concat([ticker_df, company_name_df, industry_df], axis=1)
+    print("Big DataFrame Created...")
 
     return big_df
 
@@ -67,9 +74,11 @@ def clean_tickers(big_df):
     big_df['url'] = "https://stockanalysis.com/stocks/" + big_df['ticker'] + "/"
     big_df['full'] = big_df['full'].astype('str')
     big_df['ticker'] = big_df.ticker.str.strip()
+    print("Big DataFrame Cleaned...")
 
     ## create csv to use for streamlit app
     big_df.to_csv('data/tickers_only.csv')
+    print("DataFrame saved as csv :)")
 
     return big_df
 
