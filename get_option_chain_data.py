@@ -29,7 +29,7 @@ def gather_tickers():
 
     start = time.time()
     
-    for i in tickers[:20]:
+    for i in tickers:
         
         time.sleep(1)
         
