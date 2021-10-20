@@ -23,9 +23,9 @@ def get_tickers():
 
     web = "https://stockanalysis.com/stocks/"
     #driver = webdriver.Chrome(r'C:\Users\rober\Anaconda3\bin\chromedriver')
-    chromedriver_autoinstaller.install()
+    driver_path = chromedriver_autoinstaller.install()
 
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(driver_path)
     driver.get(web)
     sel = Select(driver.find_element_by_xpath('//select[@name="perpage"]'))
     sel.select_by_visible_text("10000")
@@ -79,7 +79,7 @@ def clean_tickers(big_df):
     print("Big DataFrame Cleaned...")
 
     ## create csv to use for streamlit app
-    big_df.to_csv('data/tickers_only.csv')
+    big_df.to_csv(r'data/tickers_only.csv')
     print("DataFrame saved as csv :)")
 
     return big_df
