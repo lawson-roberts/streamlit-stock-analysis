@@ -79,7 +79,7 @@ def clean_tickers(big_df):
     print("Big DataFrame Cleaned...")
 
     ## create csv to use for streamlit app
-    big_df.to_csv(r'data/tickers_only.csv')
+    big_df.to_csv(r'data/tickers_only_test.csv')
     print("DataFrame saved as csv :)")
 
     return big_df
