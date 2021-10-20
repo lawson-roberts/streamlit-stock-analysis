@@ -24,7 +24,7 @@ jobs:
 
       - name: execute py script
         run: |
-          python get_stock_tickers.py
+          python ci_jobs/get_stock_tickers.py
 
       - name: commmit files
         run: |
