@@ -62,7 +62,7 @@ def gather_tickers():
     big_dict = json.dumps(response_dict)
 
     print("open file for writing, w")
-    f = open("data/option_data_group1=9_dict.json","w")
+    f = open("data/option_data_group9_dict.json","w")
 
     print("write json object to file")
     f.write(big_dict)

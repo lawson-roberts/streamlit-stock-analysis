@@ -49,33 +49,40 @@ def get_table_download_link(df, filename='download', message='Download csv resul
 
 def get_option_chain(ticker_desc):
     ## running stock option scraping
-    base1 = "https://api.nasdaq.com/api/quote/"
-    base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
-    url = base1 + str(ticker_desc) + base2
+    #base1 = "https://api.nasdaq.com/api/quote/"
+    #base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
+    #url = base1 + str(ticker_desc) + base2
 
-    payload={}
-    #headers = {
-    #'User-Agent': 'PostmanRuntime/7.28.4',
-    #'Accept': '*/*',
-    #'Accept-Encoding': 'gzip, deflate, br',
-    #'Content-Length': '1970',
-    #'Connection': 'keep-alive'
-    #}
+    #payload={}
 
     #headers = {'server':'Kestrel', 'Accept':'application/json, text/plain, */*','Accept-Encoding': 'gzip, deflate, br', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'}
-    headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': '*/*','Accept-Encoding': 'gzip, deflate, br'}
+    #headers = {'User-Agent': 'PostmanRuntime/7.28.4','Accept': '*/*','Accept-Encoding': 'gzip, deflate, br'}
 
-    response = requests.get(url, headers=headers, data=payload)
+    #response = requests.get(url, headers=headers, data=payload)
 
-    response_text = json.loads(response.text)
+    #response_text = json.loads(response.text)
+
+    ## reading option chain dictionary
+    response = open(r'data/option_chain_data_all.json',)
+    # returns JSON object as a dictionary
+    response_text_dict = json.load(response)
+
+    ## properly filtering and formatting new dictionary to be parsed through...probably better way to filter through dictionary that I couldnt figure out.
+    response_text = pd.DataFrame(response_text_dict)
+    response_text = response_text[response_text['ticker'] == ticker_desc]
+    selected_response_dict = response_text.set_index('ticker').to_dict()
         
-    price = json_normalize(response_text['data'])
+    ## parsing through option data to find most recent price
+    price = json_normalize(selected_response_dict['option_data'][ticker_desc]['data'])
+    #price = json_normalize(response_text['data'])
     price = pd.DataFrame(price['lastTrade'], columns=['lastTrade'])
     price[['last', 'trade', 'price', 'as', 'of', 'sep', 'day', 'year']]= price["lastTrade"].str.split(" ", expand = True)
     price_new = price['price'].str[1:][0]
     price_new = float(price_new)
 
-    option_data = json_normalize(response_text['data']['table'], 'rows')
+    ## parsing through option data to find the activitiy
+    option_data = json_normalize(selected_response_dict['option_data'][ticker_desc]['data']['table'], 'rows')
+    #option_data = json_normalize(response_text['data']['table'], 'rows')
     option_data = option_data.drop(columns = ['drillDownURL'])
     option_data['expirygroup'] = option_data['expirygroup'].replace('', np.nan).ffill()
     option_data['expirygroup'] = pd.to_datetime(option_data['expirygroup'])
@@ -172,15 +179,15 @@ def app():
                 ticker_url = ticker_row_selected['url'].unique()
                 ticker_url = ticker_url[0]
                 st.write("Ticker Url", ticker_url)
-                ticker = yfin.Ticker(ticker_desc)
-                logo = ticker.info
-                logo = json_normalize(logo)
-                logo = logo['logo_url']
-                logo = logo[0]
-                response = requests.get(logo)
-                image_bytes = io.BytesIO(response.content)
-                img = Image.open(image_bytes)
-                st.image(img)
+                #ticker = yfin.Ticker(ticker_desc)
+                #logo = ticker.info
+                #logo = json_normalize(logo)
+                #logo = logo['logo_url']
+                #logo = logo[0]
+                #response = requests.get(logo)
+                #image_bytes = io.BytesIO(response.content)
+                #img = Image.open(image_bytes)
+                #st.image(img)
 
     if pick_ticker == "Please Search for a Stock":
         pass
@@ -259,18 +266,35 @@ def app():
                 st.plotly_chart(px.bar(option_data_new, x="strike", y="Openinterest", color="type", hover_data=['Volume', 'expiryDate'], barmode = 'stack', title="Openinterest"))
             
             
+            st.plotly_chart(px.bar(option_data_new, x="expirygroup", y="Volume", color="type", hover_data=['Openinterest', 'strike'], barmode = 'stack', title="Volume of Exercised Options"), use_container_width=True)
+            st.plotly_chart(px.bar(option_data_new, x="expirygroup", y="Openinterest", color="type", hover_data=['Volume', 'strike'], barmode = 'stack', title="Openinterest of unexecuted options"), use_container_width=True)
+            
+            st.write('Open Interest by Date, looking to see where the option activity is happening.')
+            bar_fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
+            #fig = make_subplots(rows=1, cols=2, subplot_titles=("Calls", "Puts"))
+            bar1 = px.bar(calls_clean, x="expirygroup", y="Openinterest", title="Calls")
+            bar2 = px.bar(puts_clean, x="expirygroup", y="Openinterest", title="Puts")
+
+            trace3 = bar1['data'][0]
+            trace4 = bar2['data'][0]
+            bar_fig.add_trace(trace3, row=1, col=1)
+            bar_fig.add_trace(trace4, row=1, col=2)
+            #fig.update_layout(title="Open Interest by Strike Price, size by volume of options that have been exercised")
+            st.plotly_chart(bar_fig, use_container_width=True)
+            
+            
             
             #st.write('Open Interest by Strike Price, size by volume of options that have been exercised')
-            fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
+            scatter_fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
             #fig = make_subplots(rows=1, cols=2, subplot_titles=("Calls", "Puts"))
             scatter1 = px.scatter(calls_clean, x="strike", y="Openinterest", size ="Volume", title="Calls")
             scatter2 = px.scatter(puts_clean, x="strike", y="Openinterest", size ="Volume", title="Puts")
 
-            trace3 = scatter1['data'][0]
-            trace4 = scatter2['data'][0]
-            fig.add_trace(trace3, row=1, col=1)
-            fig.add_trace(trace4, row=1, col=2)
-            fig.update_layout(title="Open Interest by Strike Price, size by volume of options that have been exercised")
-            st.plotly_chart(fig, use_container_width=True)
+            trace5 = scatter1['data'][0]
+            trace6 = scatter2['data'][0]
+            scatter_fig.add_trace(trace5, row=1, col=1)
+            scatter_fig.add_trace(trace6, row=1, col=2)
+            scatter_fig.update_layout(title="Open Interest by Strike Price, size by volume of options that have been exercised")
+            st.plotly_chart(scatter_fig, use_container_width=True)
             st.write(option_data_new.astype('object'))
             st.markdown(get_table_download_link(option_data_new), unsafe_allow_html=True)

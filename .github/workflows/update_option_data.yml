@@ -3,7 +3,7 @@ name: update_option_data
 on:
   schedule:
     ## runs every week on sunday
-    - cron: '0 22 * * *'
+    - cron: '0 15 * * *'
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
 
       - name: execute py script
         run: |
-          python ci_jobs/get_option_chain_data.py
+          python ci_jobs/get_option_chain_data_og.py
 
       - name: commmit files
         run: |

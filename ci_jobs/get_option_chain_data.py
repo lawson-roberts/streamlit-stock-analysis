@@ -25,55 +25,58 @@ def gather_tickers():
     print("Starting to gather option data...")
 
     # Opening JSON file
-    one = open('data/option_data_group1_dict.json',)
+    one = open(r'data/option_data_group1_dict.json',)
     # returns JSON object as a dictionary
     one_response_dict = json.load(one)
     print("First File Loaded...")
 
-    two = open('data/option_data_group2_dict.json',)
+    two = open(r'data/option_data_group2_dict.json',)
     two_response_dict = json.load(two)
     print("Second File Loaded...")
 
-    three = open('data/option_data_group3_dict.json',)
+    three = open(r'data/option_data_group3_dict.json',)
     three_response_dict = json.load(three)
     print("Third File Loaded...")
 
-    four = open('data/option_data_group4_dict.json',)
+    four = open(r'data/option_data_group4_dict.json',)
     four_response_dict = json.load(four)
     print("Fourth File Loaded...")
 
-    five = open('data/option_data_group5_dict.json',)
+    five = open(r'data/option_data_group5_dict.json',)
     five_response_dict = json.load(five)
     print("Fifth File Loaded...")
 
-    six = open('data/option_data_group6_dict.json',)
+    six = open(r'data/option_data_group6_dict.json',)
     six_response_dict = json.load(six)
     print("Sixth File Loaded...")
 
-    seven = open('data/option_data_group7_dict.json',)
+    seven = open(r'data/option_data_group7_dict.json',)
     seven_response_dict = json.load(seven)
     print("Seventh File Loaded...")
 
-    eight = open('data/option_data_group8_dict.json',)
+    eight = open(r'data/option_data_group8_dict.json',)
     eight_response_dict = json.load(eight)
     print("Eight File Loaded...")
 
-    nine = open('data/option_data_group9_dict.json',)
+    nine = open(r'data/option_data_group9_dict.json',)
     nine_response_dict = json.load(nine)
     print("Ninth File Loaded...")
 
-    ten = open('data/option_data_group10_dict.json',)
+    ten = open(r'data/option_data_group10_dict.json',)
     ten_response_dict = json.load(ten)
     print("Tenth File Loaded...")
 
     print("Combining Dictionary")
-    all_tickers = {**one, **two, **three, **four, **five, **six, **seven, **eight, **nine, **ten}
+    all_tickers = {**one_response_dict, **two_response_dict, **three_response_dict, **four_response_dict, **five_response_dict, **six_response_dict, **seven_response_dict, **eight_response_dict, **nine_response_dict, **ten_response_dict}
+    #all_tickers = one | two | three | four | five | six | seven | eight | nine | ten
+
+    all_tickers_dict = json.dumps(all_tickers)
 
     print("open file for writing, w")
-    f = open("option_chain_data_all.json","w")
+    f = open(r"data/option_chain_data_all.json","w")
 
     print("write json object to file")
-    f.write(all_tickers)
+    f.write(all_tickers_dict)
 
     print("close file")
     f.close()

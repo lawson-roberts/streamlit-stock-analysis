@@ -22,7 +22,7 @@ import csv
 
 def gather_tickers():
     ##importing files needed for web app
-    ticker_selection = pd.read_csv(r'data\tickers_only.csv')
+    ticker_selection = pd.read_csv(r'data/tickers_only.csv')
     tickers = ticker_selection['ticker']
     
     response_dict = {"ticker":[],"option_data":[]}
@@ -32,7 +32,7 @@ def gather_tickers():
 
     print("Starting to gather option data...")
     
-    for i in tickers[:2]:
+    for i in tickers:
         
         time.sleep(1)
         
@@ -57,13 +57,36 @@ def gather_tickers():
             error_list.append([i, e])
             print("Error:", e)
 
-    big_df = pd.DataFrame(response_dict)
-    #big_df.to_csv('data/option_chain_data.csv')
+    # create json object from dictionary
+    big_dict = json.dumps(response_dict)
+
+    print("open file for writing, w")
+    f = open("data/option_data_group_everything_dict.json","w")
+
+    print("write json object to file")
+    f.write(big_dict)
+
+    print("close file")
+    f.close()
+    
+    #big_df = pd.DataFrame(response_dict)
+    #big_df.to_csv(r'data/option_chain_data_group1.csv')
 
     end = time.time()
     print("Gathering Stock Tickers Took...", round((end - start)/60, 2), "minutes")
     print("Complete!")
 
-    return big_df
+    return big_dict
 
-response_df = gather_tickers()
+big_dict = gather_tickers()
+
+    #big_df = pd.DataFrame(response_dict)
+    #big_df.to_csv('data/option_chain_data.csv')
+
+    #end = time.time()
+    #print("Gathering Stock Tickers Took...", round((end - start)/60, 2), "minutes")
+    #print("Complete!")
+
+    #return big_df
+
+#response_df = gather_tickers()
