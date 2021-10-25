@@ -24,7 +24,7 @@ jobs:
 
       - name: execute py script
         run: |
-          python ci_jobs/get_option_chain_data_og.py
+          python ci_jobs/get_option_chain_data.py
 
       - name: commmit files
         run: |

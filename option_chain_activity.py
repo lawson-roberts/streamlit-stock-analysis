@@ -47,7 +47,7 @@ def get_table_download_link(df, filename='download', message='Download csv resul
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}.csv" >{message}</a>'
     return href
 
-def get_option_chain(ticker_desc):
+def get_option_chain(ticker_desc, group):
     ## running stock option scraping
     #base1 = "https://api.nasdaq.com/api/quote/"
     #base2 = "/option-chain?assetclass=stocks&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all"
@@ -63,13 +63,21 @@ def get_option_chain(ticker_desc):
     #response_text = json.loads(response.text)
 
     ## reading option chain dictionary
-    response = open(r'data/option_chain_data_all.json',)
+    dictionary_loc = "data/option_data_group" + str(group) + "_dict.json"
+    #print(dictionary_loc)
+    ## old dict
+    #response = open(r'data/option_data_group_everything_dict.json',)
+
+    ##new dict
+    response = open(dictionary_loc,)
+
     # returns JSON object as a dictionary
     response_text_dict = json.load(response)
 
     ## properly filtering and formatting new dictionary to be parsed through...probably better way to filter through dictionary that I couldnt figure out.
     response_text = pd.DataFrame(response_text_dict)
     response_text = response_text[response_text['ticker'] == ticker_desc]
+
     selected_response_dict = response_text.set_index('ticker').to_dict()
         
     ## parsing through option data to find most recent price
@@ -123,7 +131,7 @@ def get_option_chain(ticker_desc):
     start_date = pd.to_datetime(first_date.unique()[0])
     end_date = pd.to_datetime(last_date.unique()[0])
 
-    return option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date
+    return option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date, price_new
 
 def app():
     ##importing files needed for web app
@@ -171,23 +179,31 @@ def app():
         else:
     
             with col4:
-                st.write(pick_ticker[0])
+                #st.write(pick_ticker[0])
                 ticker_row_selected = ticker_selection.loc[ticker_selection["full"] == pick_ticker]
+                ## group info
+                group_selected = ticker_row_selected['group']
+                group_selected = group_selected.iloc[0]
+                group_selected = int(group_selected)
+                group_selected_var = str(group_selected)
+                #st.write(group_selected_var)
+
+                ## ticker info
                 ticker_desc = ticker_row_selected['ticker'].unique()
                 ticker_desc = ticker_desc[0]
                 st.write("Ticker Symbol", ticker_desc, ".")
                 ticker_url = ticker_row_selected['url'].unique()
                 ticker_url = ticker_url[0]
                 st.write("Ticker Url", ticker_url)
-                #ticker = yfin.Ticker(ticker_desc)
-                #logo = ticker.info
-                #logo = json_normalize(logo)
-                #logo = logo['logo_url']
-                #logo = logo[0]
-                #response = requests.get(logo)
-                #image_bytes = io.BytesIO(response.content)
-                #img = Image.open(image_bytes)
-                #st.image(img)
+                ticker = yfin.Ticker(ticker_desc)
+                logo = ticker.info
+                logo = json_normalize(logo)
+                logo = logo['logo_url']
+                logo = logo[0]
+                response = requests.get(logo)
+                image_bytes = io.BytesIO(response.content)
+                img = Image.open(image_bytes)
+                st.image(img)
 
     if pick_ticker == "Please Search for a Stock":
         pass
@@ -202,7 +218,7 @@ def app():
             #st.write(option_data.astype('object'))
 
             st.write("### Options Filters:")
-            option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
+            option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date, price_new = get_option_chain(ticker_desc, group_selected_var)
             date_selection = pd.DataFrame(option_data_new['expirygroup'])
             dummy_date_selector = pd.DataFrame({'expirygroup': ['Please Select a Date']})
             date_selection_new = dummy_date_selector.append(date_selection)
@@ -215,6 +231,7 @@ def app():
             highDate = date_slider[1]
             st.write(highDate)
             option_data_new['expirygroup'] = pd.to_datetime(option_data_new['expirygroup']).dt.date
+            st.write("### Most Recent Closing Price was...", price_new)
 
             date_mask1 = (option_data_new['expirygroup'] >= lowDate) & (option_data_new['expirygroup'] <= highDate)
             option_data_new = option_data_new.loc[date_mask1]
@@ -257,7 +274,29 @@ def app():
             st.plotly_chart(option_ratios_graph, use_container_width=True)
             st.write("1.) Ratio used for chart above is based off said metrics calls / the same metrics puts. Trying to identify if there are any trends of people being call vs put heavy.")
             st.write("2.) Blue line is the indicator for Volume of options executed, Red line is the indicator for Openinterst in the market not yet executed.")
+
+            ## creat volume and openinterst graphs
+            #option_line_fig = make_subplots(rows=1, cols=2, column_titles=('Calls', 'Puts'))
+            #fig = make_subplots(rows=1, cols=2, subplot_titles=("Calls", "Puts"))
+            #calls_volume1 = px.line(calls_clean, x="strike", y="Volume", title="Volume")
+            #calls_openinterest1 = px.line(calls_clean, x="strike", y="Openinterest", title="Openinterest")
+
+            #puts_volume1 = px.line(puts_clean, x="strike", y="Volume", title="Volume")
+            #puts_openinterest1 = px.line(puts_clean, x="strike", y="Openinterest", title="Openinterest")
+
+            #trace_calls_volume = calls_volume1['data'][0]
+            #trace_calls_openinterest = calls_openinterest1['data'][0]
+            #trace_puts_volume = puts_volume1['data'][0]
+            #trace_puts_openinterest = puts_openinterest1['data'][0]
+
+            #option_line_fig.add_trace(trace_calls_volume, row=1, col=1)
+            #option_line_fig.add_trace(trace_calls_openinterest, row=1, col=1)
+            #option_line_fig.add_trace(trace_puts_volume, row=1, col=2)
+            #option_line_fig.add_trace(trace_puts_openinterest, row=1, col=2)
+            #option_line_fig.update_layout(title="Open Interest and Volume by Strike Price")
+            #st.plotly_chart(option_line_fig, use_container_width=True)
             
+            st.write("## Volume and Open Interest by strike price")
             col9, col10 = st.beta_columns(2)
             with col9:
                 st.plotly_chart(px.bar(option_data_new, x="strike", y="Volume", color="type", hover_data=['Openinterest', 'expiryDate'], barmode = 'stack', title="Volume"))
