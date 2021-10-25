@@ -186,24 +186,27 @@ def app():
                 group_selected = group_selected.iloc[0]
                 group_selected = int(group_selected)
                 group_selected_var = str(group_selected)
-                #st.write(group_selected_var)
+                st.write(group_selected_var)
 
                 ## ticker info
-                ticker_desc = ticker_row_selected['ticker'].unique()
-                ticker_desc = ticker_desc[0]
-                st.write("Ticker Symbol", ticker_desc, ".")
-                ticker_url = ticker_row_selected['url'].unique()
-                ticker_url = ticker_url[0]
-                st.write("Ticker Url", ticker_url)
-                ticker = yfin.Ticker(ticker_desc)
-                logo = ticker.info
-                logo = json_normalize(logo)
-                logo = logo['logo_url']
-                logo = logo[0]
-                response = requests.get(logo)
-                image_bytes = io.BytesIO(response.content)
-                img = Image.open(image_bytes)
-                st.image(img)
+                try:
+                    ticker_desc = ticker_row_selected['ticker'].unique()
+                    ticker_desc = ticker_desc[0]
+                    st.write("Ticker Symbol", ticker_desc, ".")
+                    ticker_url = ticker_row_selected['url'].unique()
+                    ticker_url = ticker_url[0]
+                    st.write("Ticker Url", ticker_url)
+                    ticker = yfin.Ticker(ticker_desc)
+                    logo = ticker.info
+                    logo = json_normalize(logo)
+                    logo = logo['logo_url']
+                    logo = logo[0]
+                    response = requests.get(logo)
+                    image_bytes = io.BytesIO(response.content)
+                    img = Image.open(image_bytes)
+                    st.image(img)
+                except Exception as e:
+                    print("Error:", e)
 
     if pick_ticker == "Please Search for a Stock":
         pass
