@@ -33,6 +33,12 @@ jobs:
           git add -A
           git commit -m "update data" -a
 
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "main"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: push changes
         uses: ad-m/github-push-action@v0.6.0
         with:

@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import json_normalize
+import json
 #from selenium.webdriver.support.expected_conditions import element_selection_state_to_be
 #import matplotlib.pyplot as plt
 import base64
@@ -17,7 +18,6 @@ import datetime
 import requests
 from lxml import html
 import csv
-import json
 
 
 def gather_tickers():

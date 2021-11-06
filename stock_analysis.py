@@ -365,19 +365,23 @@ def app():
 
         with recommendations_expander:
 
-            ticker = yfin.Ticker(ticker_desc)
-            recommendations = ticker.recommendations
-            recommendations = recommendations[recommendations['Action'] == 'main']
-            recommendations = recommendations[recommendations.index > "2018-01-01"]
-            recommendations_agg = pd.DataFrame(recommendations.groupby(['To Grade', 'Firm']).size()).reset_index()
-            recommendations_agg.columns = ['Grade', 'Firm', 'Count of Analyst']
-            st.plotly_chart(px.bar(recommendations_agg, x="Grade" , y="Count of Analyst", color='Firm', title="Recommendations by Firm since 2018"), use_container_width=True)
+            try:
+                ticker = yfin.Ticker(ticker_desc)
+                recommendations = ticker.recommendations
+                recommendations = recommendations[recommendations['Action'] == 'main']
+                recommendations = recommendations[recommendations.index > "2018-01-01"]
+                recommendations_agg = pd.DataFrame(recommendations.groupby(['To Grade', 'Firm']).size()).reset_index()
+                recommendations_agg.columns = ['Grade', 'Firm', 'Count of Analyst']
+                st.plotly_chart(px.bar(recommendations_agg, x="Grade" , y="Count of Analyst", color='Firm', title="Recommendations by Firm since 2018"), use_container_width=True)
     
-            col7, col8 = st.beta_columns(2)
-            with col7:
-                st.dataframe(recommendations_agg)
-            with col8:
-                st.dataframe(recommendations)
+                col7, col8 = st.beta_columns(2)
+                with col7:
+                    st.dataframe(recommendations_agg)
+                with col8:
+                    st.dataframe(recommendations)
+
+            except Exception as e:
+                st.write("No Recommendations found for", ticker_desc)
 
         #option_data, calls, puts, option_data_new, maxStrikeValue, minStrikeValue, twenty_fifth_per, seventy_fifth_per, start_date, end_date = get_option_chain(ticker_desc)
 
