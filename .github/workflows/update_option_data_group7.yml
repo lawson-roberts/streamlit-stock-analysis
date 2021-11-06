@@ -3,7 +3,7 @@ name: update_option_data
 on:
   schedule:
     ## runs every week on sunday
-    - cron: '0 11 * * *'
+    - cron: '0 13 * * *'
 
 jobs:
   build:
