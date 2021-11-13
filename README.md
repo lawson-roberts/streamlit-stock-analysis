@@ -1,4 +1,4 @@
-## Stock Tickers Job
+## Stock Tickers Jobs
 ![.github/workflows/update_tickers.yml](https://github.com/lawson-roberts/streamlit-stock-analysis/actions/workflows/update_tickers.yml/badge.svg)
 
 ## Stock Option Chain Data Jobs
