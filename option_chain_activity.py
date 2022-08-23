@@ -298,6 +298,13 @@ def app():
             #option_line_fig.add_trace(trace_puts_openinterest, row=1, col=2)
             #option_line_fig.update_layout(title="Open Interest and Volume by Strike Price")
             #st.plotly_chart(option_line_fig, use_container_width=True)
+
+            ### tried to group data, but removes the ability to see which exirpy date the data is assocaited with.
+
+            #option_data_volume = pd.DataFrame(option_data_new.groupby(['strike', 'type']).agg({'Volume': 'sum'})).reset_index()
+            #st.write(option_data_volume.astype('object'))
+            #st.plotly_chart(px.bar(option_data_volume, x="strike", y="Volume", color="type", title="Volume"))
+
             
             st.write("## Volume and Open Interest by strike price")
             col9, col10 = st.beta_columns(2)
