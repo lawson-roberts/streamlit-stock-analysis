@@ -246,7 +246,10 @@ def app():
 
             with col6:
                 # Setup client
-                finnhub_client = finnhub.Client(api_key="c3qcjnqad3i9vt5tl68g")
+                api_key = os.getenv("FINNHUB_API_KEY")
+                if not api_key:
+                    raise ValueError("FINNHUB_API_KEY environment variable is not set.")
+                finnhub_client = finnhub.Client(api_key=api_key)
                 res = finnhub_client.stock_candles(ticker_desc, 'D', int(unixtime_year), int(unixtime_today))
                 price_data = pd.DataFrame(res)
                 price_data.columns = ['close', 'high', 'low', 'open', 'status', 'timestamp', 'volume']
