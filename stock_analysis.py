@@ -3,6 +3,7 @@
 Created on Sun Mar 21 10:10:39 2021
 @author: ROBERTLJ
 """
+import os
 import pandas as pd
 import numpy as np
 from pandas import json_normalize
