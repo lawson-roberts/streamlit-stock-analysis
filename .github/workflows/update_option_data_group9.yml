@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: checkout repo content
@@ -15,7 +15,7 @@ jobs:
       - name : setup python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8.10' ## specific python version I am using
+          python-version: '3.8.13' ## specific python version I am using
 
       - name: install python packages
         run: |
@@ -23,6 +23,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: execute py script
+        env:
+            FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: |
           python ci_jobs/get_option_chain_data_group9.py
 
