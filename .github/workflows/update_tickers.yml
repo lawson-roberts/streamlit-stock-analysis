@@ -36,18 +36,18 @@ jobs:
         run: |
           python ci_jobs/get_stock_tickers.py
 
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "main"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: commmit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "update data" -a
-
-      - name: pull-request
-        uses: repo-sync/pull-request@v2
-        with:
-          destination_branch: "main"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: push changes
         uses: ad-m/github-push-action@v0.6.0
