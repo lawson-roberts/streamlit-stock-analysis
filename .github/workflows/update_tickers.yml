@@ -4,6 +4,13 @@ on:
   schedule:
     ## runs every week on friday
     - cron: '* 12 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      my_input:
+        description: 'A required input'
+        required: true
+        type: string
 
 jobs:
   build:
