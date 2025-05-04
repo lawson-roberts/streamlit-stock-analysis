@@ -1,3 +1,4 @@
+import os
 from turtle import color, title
 import pandas as pd
 import numpy as np
@@ -148,7 +149,11 @@ def app():
     unixtime_today = time.mktime(today.timetuple())
     unixtime_year = time.mktime(year_ago.timetuple())
     
-    finnhub_client = finnhub.Client(api_key="c3qcjnqad3i9vt5tl68g")
+    # Setup client
+    api_key = os.getenv("FINNHUB_API_KEY")
+    if not api_key:
+        raise ValueError("FINNHUB_API_KEY environment variable is not set.")
+    finnhub_client = finnhub.Client(api_key=api_key)
 
     ##importing files needed for web app
     ticker_selection = pd.read_csv('data/tickers_only.csv')
